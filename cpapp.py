@@ -62,11 +62,23 @@ def main():
     st.title("FTTH Cut Prediction System")
     st.sidebar.header("Input Parameters")
 
-    # Upload FTTH database file
-    uploaded_file = st.sidebar.file_uploader("Upload FTTH Database File", type=["xlsx"])
-    if uploaded_file is None:
-        st.warning("Please upload a valid database file.")
-        return
+  # Load database from local repository
+    file_path = "data/FTTH_DB.xlsx"
+    poles_data = load_database_from_local(file_path, "poles_db")
+    segment_poles_data = load_database_from_local(file_path, "segments_db")
+    olt_data = load_database_from_local(file_path, "olt_db")
+
+    if poles_data is None or poles_data.empty:
+        st.error("The sheet 'poles_db' is empty or not found.")
+    return
+    if segment_poles_data is None or segment_poles_data.empty:
+        st.error("The sheet 'segments_db' is empty or not found.")
+    return
+    if olt_data is None or olt_data.empty:
+        st.error("The sheet 'olt_db' is empty or not found.")
+    return
+
+    st.success("Database loaded successfully!")
     
     # Load database
     poles_data = load_database(file_path, "poles_db")
