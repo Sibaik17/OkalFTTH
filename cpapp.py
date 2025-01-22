@@ -63,7 +63,7 @@ def main():
     st.sidebar.header("Input Parameters")
 
     # Input FTTH database
-    file_path = st.sidebar.text_input("Enter FTTH Database Path", value="C:/Python/FTTH/FTTH_DB.xlsx")
+    file_path = st.sidebar.text_input("Enter FTTH Database Path", value="FTTH_DB.xlsx")
     if not file_path:
         st.warning("Please provide a valid database file path.")
         return
