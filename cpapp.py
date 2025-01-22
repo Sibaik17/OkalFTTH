@@ -62,12 +62,12 @@ def main():
     st.title("FTTH Cut Prediction System")
     st.sidebar.header("Input Parameters")
 
-    # Input FTTH database
-    file_path = st.sidebar.text_input("Enter FTTH Database Path", value="C:/Python/FTTH/FTTH_DB.xlsx")
-    if not file_path:
-        st.warning("Please provide a valid database file path.")
+    # Upload FTTH database file
+    uploaded_file = st.sidebar.file_uploader("Upload FTTH Database File", type=["xlsx"])
+    if uploaded_file is None:
+        st.warning("Please upload a valid database file.")
         return
-
+    
     # Load database
     poles_data = load_database(file_path, "poles_db")
     segment_poles_data = load_database(file_path, "segments_db")
