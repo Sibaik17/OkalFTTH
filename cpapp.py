@@ -2,12 +2,16 @@ import streamlit as st
 from geopy.distance import geodesic
 from math import radians, atan2, degrees, cos, sin
 import pandas as pd
+import requests
+from io import BytesIO
 
-# Load FTTH databases
+# Load FTTH databases from GitHub
 @st.cache_data
-def load_database(file_path, sheet_name):
+def load_database_from_github(url, sheet_name):
     try:
-        data = pd.read_excel(file_path, sheet_name=sheet_name)
+        response = requests.get(url)
+        response.raise_for_status()  # Check for HTTP errors
+        data = pd.read_excel(BytesIO(response.content), sheet_name=sheet_name)
         return data
     except Exception as e:
         st.error(f"Error loading database: {e}")
@@ -62,30 +66,26 @@ def main():
     st.title("FTTH Cut Prediction System")
     st.sidebar.header("Input Parameters")
 
-  # Load database from local repository
-    file_path = "data/FTTH_DB.xlsx"
-    poles_data = load_database_from_local(file_path, "poles_db")
-    segment_poles_data = load_database_from_local(file_path, "segments_db")
-    olt_data = load_database_from_local(file_path, "olt_db")
+    # GitHub raw URL for database file
+    file_url = "https://raw.githubusercontent.com/Sibaik17/OkalFTTH/main/data/FTTH_DB.xlsx"
 
+    # Load database from GitHub
+    poles_data = load_database_from_github(file_url, "poles_db")
+    segment_poles_data = load_database_from_github(file_url, "segments_db")
+    olt_data = load_database_from_github(file_url, "olt_db")
+
+    # Validate if data is loaded
     if poles_data is None or poles_data.empty:
         st.error("The sheet 'poles_db' is empty or not found.")
-    return
+        return
     if segment_poles_data is None or segment_poles_data.empty:
         st.error("The sheet 'segments_db' is empty or not found.")
-    return
+        return
     if olt_data is None or olt_data.empty:
         st.error("The sheet 'olt_db' is empty or not found.")
-    return
+        return
 
     st.success("Database loaded successfully!")
-    
-    # Load database
-    poles_data = load_database(file_path, "poles_db")
-    segment_poles_data = load_database(file_path, "segments_db")
-    olt_data = load_database(file_path, "olt_db")
-    if not (poles_data is not None and segment_poles_data is not None and olt_data is not None):
-        return
 
     # Step 1: Select City
     cities = olt_data['Residences'].unique()
