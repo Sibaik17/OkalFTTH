@@ -68,13 +68,17 @@ def main():
     st.title("FTTH Cut Prediction System")
     st.sidebar.header("Input Parameters")
 
-    # Input FTTH database (URL from GitHub)
+    # Input FTTH database URL
     file_url = st.sidebar.text_input("Enter FTTH Database URL", value="https://raw.githubusercontent.com/Sibaik17/OkalFTTH/main/FTTH_DB.xlsx")
     if not file_url:
         st.warning("Please provide a valid database URL.")
         return
 
-    # Load database
+    # Button to refresh the database
+    if st.sidebar.button("Refresh Database"):
+        st.cache_data.clear()  # Clear cache to refresh the database
+
+    # Load database from GitHub (without caching)
     poles_data = load_database(file_url, "poles_db")
     segment_poles_data = load_database(file_url, "segments_db")
     olt_data = load_database(file_url, "olt_db")
