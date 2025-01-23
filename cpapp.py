@@ -3,20 +3,20 @@ from geopy.distance import geodesic
 from math import radians, atan2, degrees, cos, sin
 import pandas as pd
 import requests
-from io import BytesIO
 
-# Load FTTH database from GitHub
-def load_database_from_github(url, sheet_name):
+# Load FTTH databases
+def load_database(file_url, sheet_name):
     try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            data = pd.read_excel(BytesIO(response.content), sheet_name=sheet_name)
-            return data
-        else:
-            st.error(f"Error fetching database from GitHub: {response.status_code}")
-            return None
+        # Get raw content from GitHub URL
+        response = requests.get(file_url)
+        response.raise_for_status()  # Check if the request was successful
+        with open("temp_file.xlsx", "wb") as f:
+            f.write(response.content)
+
+        data = pd.read_excel("temp_file.xlsx", sheet_name=sheet_name)
+        return data
     except Exception as e:
-        st.error(f"Error loading database: {e}")
+        st.error(f"Error loading database from GitHub: {e}")
         return None
 
 # Validate input segment
@@ -68,32 +68,29 @@ def main():
     st.title("FTTH Cut Prediction System")
     st.sidebar.header("Input Parameters")
 
-    # Step 1: Specify GitHub Raw URL
-    github_url = st.sidebar.text_input(
-        "Enter GitHub Raw URL for FTTH Database",
-        value="FTTH_DB.xlsx"
-    )
-    if not github_url:
-        st.warning("Please provide a valid GitHub Raw URL for the database.")
+    # Input FTTH database (URL from GitHub)
+    file_url = st.sidebar.text_input("Enter FTTH Database URL", value="https://raw.githubusercontent.com/username/repo-name/main/FTTH_DB.xlsx")
+    if not file_url:
+        st.warning("Please provide a valid database URL.")
         return
 
-    # Load database from GitHub
-    poles_data = load_database_from_github(github_url, "poles_db")
-    segment_poles_data = load_database_from_github(github_url, "segments_db")
-    olt_data = load_database_from_github(github_url, "olt_db")
+    # Load database
+    poles_data = load_database(file_url, "poles_db")
+    segment_poles_data = load_database(file_url, "segments_db")
+    olt_data = load_database(file_url, "olt_db")
     if not (poles_data is not None and segment_poles_data is not None and olt_data is not None):
         return
 
-    # Step 2: Select City
+    # Step 1: Select City
     cities = olt_data['Residences'].unique()
     city = st.selectbox("Select City", cities)
 
-    # Step 3: Select OLT
+    # Step 2: Select OLT
     filtered_olt_data = olt_data[olt_data['Residences'] == city]
     olts = filtered_olt_data['OLT_Name'].unique()
     olt_name = st.selectbox("Select OLT Name", olts)
 
-    # Step 4: Select Segment
+    # Step 3: Select Segment
     filtered_segments = segment_poles_data[
         (segment_poles_data['Residences'] == city) &
         (segment_poles_data['OLT_Name'] == olt_name)
@@ -101,10 +98,9 @@ def main():
     segments = filtered_segments['Segment_ID'].unique()
     segment_id = st.selectbox("Select Segment", segments)
 
-    # Step 5: Enter OTDR cut distance
+    # Step 4: Enter OTDR cut distance
     distance_otdr = st.number_input("Enter OTDR Cut Distance (in meters):", min_value=0.0)
 
-    # Prediction
     if st.button("Predict Cut Location"):
         try:
             segment_poles = validate_segment(filtered_segments, segment_id)
