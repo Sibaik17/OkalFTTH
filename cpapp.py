@@ -69,7 +69,7 @@ def main():
     st.sidebar.header("Input Parameters")
 
     # Input FTTH database (URL from GitHub)
-    file_url = st.sidebar.text_input("Enter FTTH Database URL", value="https://raw.githubusercontent.com/username/repo-name/main/FTTH_DB.xlsx")
+    file_url = st.sidebar.text_input("Enter FTTH Database URL", value="https://raw.githubusercontent.com/Sibaik17/OkalFTTH/main/FTTH_DB.xlsx")
     if not file_url:
         st.warning("Please provide a valid database URL.")
         return
