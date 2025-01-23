@@ -79,15 +79,15 @@ def main():
     cities = olt_data['Residences'].unique()
     city = st.selectbox("Select City", cities)
 
-    # Step 2: Select OLT Location
+    # Step 2: Select OLT
     filtered_olt_data = olt_data[olt_data['Residences'] == city]
-    olts = filtered_olt_data['OLT_Location'].unique()
-    olt_loc = st.selectbox("Select OLT", olts)
+    olts = filtered_olt_data['OLT_ID'].unique()
+    olt_id = st.selectbox("Select OLT", olts)
 
     # Step 3: Select Segment
     filtered_segments = segment_poles_data[
         (segment_poles_data['Residences'] == city) &
-        (segment_poles_data['OLT_Location'] == olt_loc)
+        (segment_poles_data['OLT_ID'] == olt_id)
     ]
     segments = filtered_segments['Segment_ID'].unique()
     segment_id = st.selectbox("Select Segment", segments)
