@@ -71,7 +71,7 @@ def main():
     # Step 1: Specify GitHub Raw URL
     github_url = st.sidebar.text_input(
         "Enter GitHub Raw URL for FTTH Database",
-        value="https://raw.githubusercontent.com/Sibaik17/OkalFTTH/blob/main/FTTH_DB.xlsx"
+        value="FTTH_DB.xlsx"
     )
     if not github_url:
         st.warning("Please provide a valid GitHub Raw URL for the database.")
