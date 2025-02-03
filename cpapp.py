@@ -27,8 +27,8 @@ def validate_segment(segment_data, segment_id):
     return data
 
 # Predict cut location
-def predict_cut_location(segment_poles, poles_data, distance_otdr, slack_ratio=1.15):
-    adjusted_otdr_distance = distance_otdr * 1.15
+def predict_cut_location(segment_poles, poles_data, distance_otdr, slack_ratio=1.05):
+    adjusted_otdr_distance = distance_otdr * 1.05
     accumulated_distance = 0
 
     for idx, row in segment_poles.iterrows():
