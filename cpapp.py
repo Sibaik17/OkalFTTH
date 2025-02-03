@@ -33,7 +33,7 @@ def predict_cut_location(segment_poles, poles_data, distance_otdr, slack_ratio=1
 
     for idx, row in segment_poles.iterrows():
         pole_distance = row['Distance (m)']
-        cable_adjustment = ((accumulated_distance + pole_distance) // 400) * 20 * slack_ratio
+        cable_adjustment = ((accumulated_distance + pole_distance) // 400) * 1 * slack_ratio
         effective_distance = adjusted_otdr_distance - cable_adjustment
 
         if accumulated_distance + pole_distance >= effective_distance:
