@@ -27,13 +27,13 @@ def validate_segment(segment_data, segment_id):
     return data
 
 # Predict cut location
-def predict_cut_location(segment_poles, poles_data, distance_otdr, slack_ratio=0.85):
-    adjusted_otdr_distance = distance_otdr * 0.85
+def predict_cut_location(segment_poles, poles_data, distance_otdr, slack_ratio=1.25):
+    adjusted_otdr_distance = distance_otdr * 1.25
     accumulated_distance = 0
 
     for idx, row in segment_poles.iterrows():
         pole_distance = row['Distance (m)']
-        cable_adjustment = ((accumulated_distance + pole_distance) // 400) * 20 * slack_ratio
+        cable_adjustment = ((accumulated_distance + pole_distance) // 400) * 25 * slack_ratio
         effective_distance = adjusted_otdr_distance - cable_adjustment
 
         if accumulated_distance + pole_distance >= effective_distance:
